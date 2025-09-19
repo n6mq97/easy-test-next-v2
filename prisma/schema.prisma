@@ -1,0 +1,59 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  password      String
+  role          Role           @default(USER)
+  programs      Program[]
+  answerResults AnswerResult[]
+}
+
+model Program {
+  id       String    @id @default(cuid())
+  name     String
+  theory   String?
+  userId   String
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sections Section[]
+}
+
+model Section {
+  id        String     @id @default(cuid())
+  name      String
+  theory    String?
+  programId String
+  program   Program    @relation(fields: [programId], references: [id], onDelete: Cascade)
+  questions Question[]
+}
+
+model Question {
+  id                 String         @id @default(cuid())
+  questionText       String
+  answers            String // JSON array of strings
+  correctAnswerIndex Int
+  sectionId          String
+  section            Section        @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  answerResults      AnswerResult[]
+}
+
+model AnswerResult {
+  id         String   @id @default(cuid())
+  isCorrect  Boolean
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
