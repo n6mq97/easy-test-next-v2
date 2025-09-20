@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from "@/modules/auth";
 
 export const metadata: Metadata = {
   title: "Easy Test",
@@ -14,9 +15,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-neutral-900 text-neutral-100 antialiased">
-        <main className="min-h-screen flex flex-col items-center p-24">
-          {children}
-        </main>
+        <AuthProvider>
+          <main className="min-h-screen flex flex-col items-center p-24">
+            {children}
+          </main>
+        </AuthProvider>
       </body>
     </html>
   );
