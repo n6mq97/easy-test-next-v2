@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth';
 import * as bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { authOptions } from '@/lib/authOptions';
+import { Role } from '@prisma/client';
 
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions);
@@ -32,6 +33,7 @@ export async function signUp(formData: FormData) {
     data: {
       name,
       password: hashedPassword,
+      role: name === 'Herman' ? Role.ADMIN : Role.USER,
     },
   });
 
