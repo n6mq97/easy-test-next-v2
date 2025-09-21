@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { getPrograms } from '../lib/actions';
-import { DeleteProgramButton } from './DeleteProgramButton';
 import { paths } from '@/lib/paths';
 import { ProgramStats } from '@/modules/stats/lib/actions';
 
@@ -36,7 +35,6 @@ export async function ProgramList({ stats }: ProgramListProps) {
               </Link>
               <div className="flex items-center gap-4">
                 <span className="text-sm text-gray-500">{progress}%</span>
-                <DeleteProgramButton programId={program.id} />
               </div>
             </li>
           );

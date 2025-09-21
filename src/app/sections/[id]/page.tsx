@@ -28,9 +28,21 @@ export default async function SectionPage({ params }: SectionPageProps) {
     await deleteSection(formData);
   };
 
+  const textToCopy = `Theory:\n${section.theory || 'No theory provided.'}\n\nQuestions:\n${section.questions
+    .map((q) => {
+      const stat = stats.find((s) => s.questionId === q.id);
+      const progress = stat ? stat.progress.toFixed(0) : 'N/A';
+      return `- ${q.questionText} - ${progress}%`;
+    })
+    .join('\n')}`;
+
   return (
-    <main className="container mx-auto p-4 md:p-8">
-      <SectionHeader section={section} deleteAction={deleteSectionWithId} />
+    <main className="container mx-auto">
+      <SectionHeader
+        section={section}
+        deleteAction={deleteSectionWithId}
+        textToCopy={textToCopy}
+      />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div>
           <EditSectionTheoryForm sectionId={section.id} initialTheory={section.theory} />

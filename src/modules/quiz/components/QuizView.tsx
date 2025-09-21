@@ -5,6 +5,7 @@ import { getQuizQuestions, QuizQuestionData } from '../lib/actions';
 import { QuizQuestion } from './QuizQuestion';
 import { QuizResults } from './QuizResults';
 import { useRouter } from 'next/navigation';
+import { paths } from '@/lib/paths';
 
 interface QuizViewProps {
   sectionId?: string;
@@ -23,7 +24,8 @@ export const QuizView = ({ sectionId, programId }: QuizViewProps) => {
   const fetchQuestions = async () => {
     setIsLoading(true);
     try {
-      const fetchedQuestions = await getQuizQuestions({ sectionId, programId });
+      const params = sectionId ? { sectionId } : { programId };
+      const fetchedQuestions = await getQuizQuestions(params);
       setQuestions(fetchedQuestions);
     } catch (error) {
       console.error('Failed to fetch questions:', error);
@@ -56,7 +58,7 @@ export const QuizView = ({ sectionId, programId }: QuizViewProps) => {
           setIsFinished(false);
           fetchQuestions();
         }}
-        onExit={() => router.back()}
+        onExit={() => router.push(paths.program(programId!))}
       />
     );
   }
@@ -89,10 +91,10 @@ export const QuizView = ({ sectionId, programId }: QuizViewProps) => {
           Question {currentQuestionIndex + 1} of {questions.length}
         </h2>
         <button
-          onClick={() => router.back()}
-          className="text-sm text-gray-500 hover:text-gray-700"
+          onClick={() => router.push(paths.program(programId!))}
+          className="text-sm text-white hover:underline"
         >
-          Exit to Sections
+          Exit to Program
         </button>
       </header>
 
@@ -115,7 +117,7 @@ export const QuizView = ({ sectionId, programId }: QuizViewProps) => {
           <button
             onClick={handleNext}
             disabled={!isAnswerSubmitted}
-            className="p-2 rounded-md border disabled:bg-gray-800/50 disabled:text-white bg-white text-black"
+            className="p-2 px-8 rounded-md border disabled:bg-gray-800/50 disabled:text-white bg-white text-black"
           >
             Next
           </button>

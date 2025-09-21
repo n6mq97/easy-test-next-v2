@@ -48,7 +48,7 @@ export async function importQuestionsFromJson(programId: string, jsonContent: st
         },
       });
     }
-    revalidatePath(`/programs/${programId}`, 'page');
+    revalidatePath(`/programs/${programId}`);
     return { success: `Successfully imported ${parsedData.data.length} questions.` };
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';

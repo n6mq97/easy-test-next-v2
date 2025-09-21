@@ -5,6 +5,7 @@ type AuthFormProps = {
   buttonText: string;
   error: string | null;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  children?: React.ReactNode;
 };
 
 export function AuthForm({
@@ -12,6 +13,7 @@ export function AuthForm({
   buttonText,
   error,
   onSubmit,
+  children,
 }: AuthFormProps) {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
@@ -43,6 +45,7 @@ export function AuthForm({
       >
         {buttonText}
       </button>
+      {children}
     </form>
   );
 }

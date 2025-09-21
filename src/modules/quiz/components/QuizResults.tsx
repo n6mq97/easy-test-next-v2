@@ -17,11 +17,11 @@ export const QuizResults = ({ score, totalQuestions, onRestart, onExit }: QuizRe
         You scored {score} out of {totalQuestions} ({percentage.toFixed(0)}%)
       </p>
       <div className="mt-6">
-        <button onClick={onRestart} className="p-2 bg-blue-500 text-white rounded-md mr-2">
+        <button onClick={onRestart} className="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-md mr-2">
           Try Again
         </button>
-        <button onClick={onExit} className="p-2 bg-gray-500 text-white rounded-md">
-          Back to Sections
+        <button onClick={onExit} className="p-2 bg-neutral-700 hover:bg-neutral-600 rounded-md">
+          Back to Program
         </button>
       </div>
     </div>

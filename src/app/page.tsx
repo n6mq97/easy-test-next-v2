@@ -8,7 +8,7 @@ export default async function Page() {
   const stats = user ? await getProgramsStats(user.id) : [];
 
   return (
-    <main className="container mx-auto p-4 md:p-8">
+    <main className="container mx-auto">
       <header className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold">Welcome, {user?.name}!</h1>

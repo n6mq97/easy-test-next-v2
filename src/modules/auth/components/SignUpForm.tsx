@@ -4,6 +4,7 @@ import { signUp } from '@/modules/auth/lib/actions';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { AuthForm } from './AuthForm';
+import Link from 'next/link';
 
 export function SignUpForm() {
   const router = useRouter();
@@ -28,6 +29,13 @@ export function SignUpForm() {
       buttonText="Sign Up"
       error={error}
       onSubmit={handleSubmit}
-    />
+    >
+      <p className="text-center text-sm text-gray-500">
+        Already have an account?{' '}
+        <Link href="/login" className="font-semibold hover:underline">
+          Sign In
+        </Link>
+      </p>
+    </AuthForm>
   );
 }

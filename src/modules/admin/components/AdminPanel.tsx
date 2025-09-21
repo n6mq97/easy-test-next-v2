@@ -68,7 +68,7 @@ export function AdminPanel() {
         <button
           onClick={handleExport}
           disabled={isExporting}
-          className="rounded bg-gray-200 px-4 py-2 text-black hover:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded bg-white px-4 py-2 text-black hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isExporting ? 'Экспорт...' : 'Скачать резервную копию'}
         </button>
@@ -81,7 +81,7 @@ export function AdminPanel() {
             Внимание: Эта операция полностью заменит все существующие данные на
             данные из загруженного файла.
           </p>
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col space-y-4 md:flex-row md:space-x-4 md:space-y-0">
             <input
               name="file"
               type="file"
@@ -91,7 +91,7 @@ export function AdminPanel() {
             <button
               type="submit"
               disabled={isImporting}
-              className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded bg-neutral-700 px-4 py-2 text-white hover:bg-neutral-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isImporting ? 'Импорт...' : 'Загрузить и заменить'}
             </button>

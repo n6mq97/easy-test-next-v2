@@ -66,9 +66,44 @@ export async function deleteSection(formData: FormData) {
     throw new Error('Section ID is required');
   }
 
+  const section = await prisma.section.findUnique({
+    where: { id: sectionId },
+    select: { programId: true },
+  });
+
+  if (!section) {
+    throw new Error('Section not found');
+  }
+
   await prisma.section.delete({
     where: { id: sectionId },
   });
 
-  revalidatePath('/programs/[id]', 'page');
+  revalidatePath(`/programs/${section.programId}`);
+}
+
+export async function getSectionAsJson(sectionId: string) {
+  const section = await prisma.section.findUnique({
+    where: { id: sectionId },
+    include: {
+      questions: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      },
+    },
+  });
+
+  if (!section) {
+    return { error: 'Section not found' };
+  }
+
+  const jsonForExport = section.questions.map((q) => ({
+    section: section.name,
+    question: q.questionText,
+    answers: JSON.parse(q.answers as string), // Assuming answers are stored as a JSON string
+    correct: q.correctAnswerIndex,
+  }));
+
+  return { success: true, json: JSON.stringify(jsonForExport, null, 2) };
 }

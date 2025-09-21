@@ -12,8 +12,8 @@ export function QuestionList({ questions, stats }: QuestionListProps) {
   }
 
   return (
-    <div className="mt-8">
-      <h3 className="text-2xl font-semibold mb-4">Questions</h3>
+    <div className="mt-6">
+      <h2 className="text-2xl font-semibold mb-4">Questions</h2>
       <ul className="space-y-4">
         {questions.map((question) => {
           const questionStat = stats.find(s => s.questionId === question.id);

@@ -4,6 +4,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { AuthForm } from './AuthForm';
+import Link from 'next/link';
 
 export function SignInForm() {
   const router = useRouter();
@@ -35,6 +36,13 @@ export function SignInForm() {
       buttonText="Sign In"
       error={error}
       onSubmit={handleSubmit}
-    />
+    >
+      <p className="text-center text-sm text-gray-500">
+        Don&apos;t have an account?{' '}
+        <Link href="/register" className="font-semibold hover:underline">
+          Sign Up
+        </Link>
+      </p>
+    </AuthForm>
   );
 }

@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-neutral-900 text-neutral-100 antialiased">
         <AuthProvider>
-          <main className="min-h-screen flex flex-col items-center p-24">
+          <main className="min-h-screen flex flex-col items-center p-4 sm:p-6 md:p-8">
             {children}
           </main>
         </AuthProvider>

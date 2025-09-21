@@ -37,6 +37,9 @@ cp .env.example .env
     ```bash
     docker run -d --env-file .env -p 3000:3000 --name easy-test-container easy-test
     ```
+    ```bash
+    docker build -t easy-test-next-v2-test . && docker rm -f easy-test-container-test || true && docker run -d --env-file .env -e DATABASE_URL="file:/app/dev.db" -p 3000:3000 --name easy-test-container-test easy-test-next-v2-test
+    ```
     *Эта команда запускает контейнер в фоновом режиме (`-d`), использует переменные из вашего `.env` файла (`--env-file .env`), пробрасывает порт `3000` (`-p 3000:3000`) и задает имя контейнеру.*
 
 После этого приложение будет доступно по адресу `http://localhost:3000`.
