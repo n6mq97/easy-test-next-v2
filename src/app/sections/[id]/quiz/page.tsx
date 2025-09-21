@@ -1,19 +1,14 @@
 import { QuizView } from '@/modules/quiz';
-import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
+import { getSectionDetails } from '@/modules/sections/lib/actions';
 
-interface SectionQuizPageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
+type SectionQuizPageProps = {
+  params: Promise<{ id: string }>;
+};
 
 export default async function SectionQuizPage({ params }: SectionQuizPageProps) {
   const { id } = await params;
-  const section = await prisma.section.findUnique({
-    where: { id },
-    select: { programId: true },
-  });
+  const section = await getSectionDetails(id);
 
   if (!section) {
     notFound();

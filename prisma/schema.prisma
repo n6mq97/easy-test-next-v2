@@ -27,6 +27,7 @@ model Program {
   id        String    @id @default(cuid())
   name      String
   theory    String?
+  plan      String?
   userId    String
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   sections  Section[]

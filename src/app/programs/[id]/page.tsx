@@ -6,6 +6,7 @@ import { Suspense } from 'react';
 import { ProgramHeader } from '@/modules/programs/components/ProgramHeader';
 import { getCurrentUser } from '@/modules/auth';
 import { getProgramsStats, getSectionsStats } from '@/modules/stats/lib/actions';
+import { EditProgramPlanForm } from '@/modules/programs/components/EditProgramPlanForm';
 
 type ProgramPageProps = {
   params: Promise<{ id: string }>;
@@ -41,6 +42,7 @@ export default async function ProgramPage({ params }: ProgramPageProps) {
       />
       <div className="max-w-2xl mx-auto">
         <JsonImportForm programId={id} />
+        <EditProgramPlanForm programId={program.id} initialPlan={program.plan} />
         <Suspense fallback={<p className="text-center mt-8">Loading sections...</p>}>
           <SectionList programId={id} stats={sectionStats} initialSections={sections} />
         </Suspense>

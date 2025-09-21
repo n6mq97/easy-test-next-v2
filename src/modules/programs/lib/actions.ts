@@ -55,21 +55,17 @@ export async function getPrograms() {
   });
 }
 
-export async function getProgramById(programId: string) {
-  const user = await getCurrentUser();
-  if (!user) {
-    return null;
-  }
-  return prisma.program.findUnique({
-    where: {
-      id: programId,
-      userId: user.id, // Ensure user can only access their own programs
-    },
+export async function getProgramById(id: string) {
+  const program = await prisma.program.findUnique({
+    where: { id },
     select: {
       id: true,
       name: true,
+      plan: true,
+      userId: true,
     },
   });
+  return program;
 }
 
 export async function deleteProgram(programId: string) {
@@ -95,6 +91,19 @@ export async function deleteProgram(programId: string) {
     return { success: true };
   } catch (_error) {
     return { error: 'Failed to delete the program.' };
+  }
+}
+
+export async function updateProgramPlan(programId: string, plan: string) {
+  try {
+    await prisma.program.update({
+      where: { id: programId },
+      data: { plan },
+    });
+    revalidatePath(`/programs/${programId}`);
+  } catch (error) {
+    console.error('Failed to update program plan:', error);
+    // Handle error appropriately
   }
 }
 

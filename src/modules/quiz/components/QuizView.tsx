@@ -1,49 +1,59 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getQuizQuestions, QuizQuestionData } from '../lib/actions';
+import { useRouter } from 'next/navigation';
+import { QuizQuestionData, getQuizQuestions } from '../lib/actions';
 import { QuizQuestion } from './QuizQuestion';
 import { QuizResults } from './QuizResults';
-import { useRouter } from 'next/navigation';
-import { paths } from '@/lib/paths';
 
 interface QuizViewProps {
   sectionId?: string;
   programId?: string;
+  initialQuestions?: QuizQuestionData[];
+  exitPath?: string;
 }
 
-export const QuizView = ({ sectionId, programId }: QuizViewProps) => {
-  const [questions, setQuestions] = useState<QuizQuestionData[]>([]);
+export const QuizView = ({ sectionId, programId, initialQuestions, exitPath }: QuizViewProps) => {
+  const [questions, setQuestions] = useState<QuizQuestionData[]>(initialQuestions || []);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!initialQuestions);
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const router = useRouter();
 
-  const fetchQuestions = async () => {
-    setIsLoading(true);
-    try {
-      const params = sectionId ? { sectionId } : { programId };
-      const fetchedQuestions = await getQuizQuestions(params);
-      setQuestions(fetchedQuestions);
-    } catch (error) {
-      console.error('Failed to fetch questions:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    if (initialQuestions) return;
+
+    const fetchQuestions = async () => {
+      setIsLoading(true);
+      try {
+        const params = sectionId ? { sectionId } : { programId };
+        const fetchedQuestions = await getQuizQuestions(params);
+        setQuestions(fetchedQuestions);
+      } catch (error) {
+        console.error('Failed to fetch questions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
     fetchQuestions();
-  }, [sectionId, programId]);
+  }, [sectionId, programId, initialQuestions]);
 
   if (isLoading) {
     return <div>Loading questions...</div>;
   }
 
   if (questions.length === 0) {
-    return <div>No questions found.</div>;
+    return (
+      <div>
+        <p>No questions found.</p>
+        <button onClick={() => router.push(exitPath || '/')} className="mt-4 bg-neutral-700 px-4 py-2 rounded hover:bg-neutral-600">
+          Back
+        </button>
+      </div>
+    );
   }
 
   if (isFinished) {
@@ -52,13 +62,13 @@ export const QuizView = ({ sectionId, programId }: QuizViewProps) => {
         score={score}
         totalQuestions={questions.length}
         onRestart={() => {
+          setQuestions([...questions].sort(() => Math.random() - 0.5));
           setCurrentQuestionIndex(0);
           setScore(0);
           setIsAnswerSubmitted(false);
           setIsFinished(false);
-          fetchQuestions();
         }}
-        onExit={() => router.push(paths.program(programId!))}
+        onExit={() => router.push(exitPath || (programId ? `/programs/${programId}` : '/'))}
       />
     );
   }
@@ -91,10 +101,10 @@ export const QuizView = ({ sectionId, programId }: QuizViewProps) => {
           Question {currentQuestionIndex + 1} of {questions.length}
         </h2>
         <button
-          onClick={() => router.push(paths.program(programId!))}
-          className="text-sm text-white hover:underline"
+          onClick={() => router.push(exitPath || (programId ? `/programs/${programId}` : '/'))}
+          className="text-sm text-gray-500 hover:text-gray-700"
         >
-          Exit to Program
+          Exit to Sections
         </button>
       </header>
 

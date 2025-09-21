@@ -15,7 +15,9 @@ interface QuizQuestionProps {
 }
 
 export const QuizQuestion = ({ question, onAnswerSubmit }: QuizQuestionProps) => {
-  const [submittedAnswer, setSubmittedAnswer] = useState<SubmittedAnswer | null>(null);
+  const [submittedAnswer, setSubmittedAnswer] = useState<SubmittedAnswer | null>(
+    null,
+  );
 
   const handleAnswerClick = async (index: number) => {
     if (submittedAnswer) return;
@@ -40,8 +42,10 @@ export const QuizQuestion = ({ question, onAnswerSubmit }: QuizQuestionProps) =>
       <div>
         {answers.map((answer: string, index: number) => {
           const isSubmitted = submittedAnswer !== null;
-          const isSelected = isSubmitted && submittedAnswer.selectedIndex === index;
-          const isCorrect = isSubmitted && submittedAnswer.correctAnswerIndex === index;
+          const isSelected =
+            isSubmitted && submittedAnswer.selectedIndex === index;
+          const isCorrect =
+            isSubmitted && submittedAnswer.correctAnswerIndex === index;
 
           let buttonClass = 'p-2 border rounded-md w-full my-1 text-left';
           if (isSubmitted) {

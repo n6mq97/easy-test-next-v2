@@ -2,10 +2,12 @@ import { Suspense } from 'react';
 import { getCurrentUser, SignOutButton } from '@/modules/auth';
 import { CreateProgramForm, ProgramList } from '@/modules/programs';
 import { getProgramsStats } from '@/modules/stats/lib/actions';
+import { getPrograms } from '@/modules/programs/lib/actions';
 
 export default async function Page() {
   const user = await getCurrentUser();
   const stats = user ? await getProgramsStats(user.id) : [];
+  const programs = await getPrograms();
 
   return (
     <main className="container mx-auto">
@@ -20,7 +22,7 @@ export default async function Page() {
       <div className="max-w-2xl mx-auto">
         <CreateProgramForm />
         <Suspense fallback={<p>Loading programs...</p>}>
-          <ProgramList stats={stats} />
+          <ProgramList stats={stats} initialPrograms={programs} />
         </Suspense>
       </div>
     </main>

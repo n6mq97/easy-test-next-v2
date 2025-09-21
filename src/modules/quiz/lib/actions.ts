@@ -53,6 +53,33 @@ export async function getQuizQuestions({
   return [];
 }
 
+export async function getQuizQuestionsForMultiplePrograms(
+  programIds: string[],
+): Promise<QuizQuestionData[]> {
+  const sections = await prisma.section.findMany({
+    where: {
+      programId: {
+        in: programIds,
+      },
+    },
+    include: {
+      questions: {
+        select: {
+          id: true,
+          questionText: true,
+          answers: true,
+        },
+      },
+    },
+  });
+
+  const allQuestions = sections.flatMap((section) => section.questions);
+
+  const shuffledQuestions = allQuestions.sort(() => Math.random() - 0.5);
+
+  return shuffledQuestions;
+}
+
 export async function submitAnswer({
   questionId,
   selectedAnswerIndex,
