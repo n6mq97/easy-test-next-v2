@@ -1,16 +1,26 @@
-import {
-  getCurrentUser,
-  SignOutButton,
-} from '@/modules/auth';
+import { Suspense } from 'react';
+import { getCurrentUser, SignOutButton } from '@/modules/auth';
+import { CreateProgramForm, ProgramList } from '@/modules/programs';
 
 export default async function Page() {
   const user = await getCurrentUser();
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <h1 className="text-2xl font-bold">Welcome, {user?.name}!</h1>
-      <p>Your role is: {user?.role}</p>
-      <SignOutButton />
-    </div>
+    <main className="container mx-auto p-4 md:p-8">
+      <header className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">Welcome, {user?.name}!</h1>
+          <p className="text-gray-500">Manage your programs and start testing.</p>
+        </div>
+        <SignOutButton />
+      </header>
+      
+      <div className="max-w-2xl mx-auto">
+        <CreateProgramForm />
+        <Suspense fallback={<p>Loading programs...</p>}>
+          <ProgramList />
+        </Suspense>
+      </div>
+    </main>
   );
 }
