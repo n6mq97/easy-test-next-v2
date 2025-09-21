@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { SectionHeader } from '@/modules/sections/components/SectionHeader';
 import { EditSectionTheoryForm } from '@/modules/sections';
 import { QuestionList } from '@/modules/questions';
+import { getCurrentUser } from '@/modules/auth';
+import { getQuestionsStats } from '@/modules/stats/lib/actions';
 
 type SectionPageProps = {
   params: Promise<{ id: string }>;
@@ -11,10 +13,13 @@ type SectionPageProps = {
 export default async function SectionPage({ params }: SectionPageProps) {
   const { id } = await params;
   const section = await getSectionDetails(id);
+  const user = await getCurrentUser();
 
-  if (!section) {
+  if (!section || !user) {
     notFound();
   }
+
+  const stats = await getQuestionsStats(section.id, user.id);
 
   const deleteSectionWithId = async () => {
     'use server';
@@ -31,7 +36,7 @@ export default async function SectionPage({ params }: SectionPageProps) {
           <EditSectionTheoryForm sectionId={section.id} initialTheory={section.theory} />
         </div>
         <div>
-          <QuestionList questions={section.questions} />
+          <QuestionList questions={section.questions} stats={stats} />
         </div>
       </div>
     </main>

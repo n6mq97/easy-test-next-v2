@@ -3,21 +3,39 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Program } from '@prisma/client';
+import { ProgramStats } from '@/modules/stats/lib/actions';
 
 interface ProgramHeaderProps {
   program: Pick<Program, 'id' | 'name'>;
   deleteAction: () => Promise<void>;
+  stats?: ProgramStats;
 }
 
-export function ProgramHeader({ program, deleteAction }: ProgramHeaderProps) {
+export function ProgramHeader({
+  program,
+  deleteAction,
+  stats,
+}: ProgramHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header className="mb-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold">Program: {program.name}</h1>
-          <p className="text-gray-500">Import questions and manage sections.</p>
+          {stats ? (
+            <div className="text-sm text-gray-500 mt-1 flex gap-4">
+              <span>Total Attempts: {stats.totalAttempts}</span>
+              <span>
+                Success: {stats.progress.toFixed(0)}% ({stats.correctAnswers}/
+                {stats.totalAttempts})
+              </span>
+            </div>
+          ) : (
+            <p className="text-gray-500">
+              Import questions and manage sections.
+            </p>
+          )}
         </div>
         <div className="relative">
           <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
