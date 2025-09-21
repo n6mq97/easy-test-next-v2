@@ -18,7 +18,7 @@ export const QuizView = ({ sectionId, programId, initialQuestions, exitPath }: Q
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(!initialQuestions);
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
-  const [score, setScore] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
   const router = useRouter();
 
@@ -59,16 +59,16 @@ export const QuizView = ({ sectionId, programId, initialQuestions, exitPath }: Q
   if (isFinished) {
     return (
       <QuizResults
-        score={score}
+        correctAnswers={correctAnswers}
         totalQuestions={questions.length}
         onRestart={() => {
           setQuestions([...questions].sort(() => Math.random() - 0.5));
           setCurrentQuestionIndex(0);
-          setScore(0);
+          setCorrectAnswers(0);
           setIsAnswerSubmitted(false);
           setIsFinished(false);
         }}
-        onExit={() => router.push(exitPath || (programId ? `/programs/${programId}` : '/'))}
+        onExit={() => router.push(exitPath || (programId ? `/programs/${programId}`: '/'))}
       />
     );
   }
@@ -89,7 +89,7 @@ export const QuizView = ({ sectionId, programId, initialQuestions, exitPath }: Q
 
   const handleAnswerSubmitted = (isCorrect: boolean) => {
     if (isCorrect) {
-      setScore((prev) => prev + 1);
+      setCorrectAnswers((prev) => prev + 1);
     }
     setIsAnswerSubmitted(true);
   };
