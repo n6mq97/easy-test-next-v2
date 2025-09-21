@@ -1,14 +1,14 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
-import prisma from '@/lib/prisma';
 import { z } from 'zod';
+import prisma from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 const questionSchema = z.object({
-  section: z.string().min(1, 'Section name cannot be empty.'),
-  question: z.string().min(1, 'Question text cannot be empty.'),
-  answers: z.array(z.string()).min(2, 'There must be at least two answers.'),
+  question: z.string(),
+  answers: z.array(z.string()).min(2),
   correct: z.number().int(),
+  section: z.string(),
 });
 
 const importSchema = z.array(questionSchema);
@@ -16,52 +16,42 @@ const importSchema = z.array(questionSchema);
 export async function importQuestionsFromJson(programId: string, jsonContent: string) {
   try {
     const data = JSON.parse(jsonContent);
-    const validationResult = importSchema.safeParse(data);
+    const parsedData = importSchema.safeParse(data);
 
-    if (!validationResult.success) {
-      return { error: 'Invalid JSON format.', details: validationResult.error.flatten() };
+    if (!parsedData.success) {
+      throw new Error(`Invalid JSON structure: ${parsedData.error.message}`);
     }
 
-    const validatedData = validationResult.data;
+    for (const item of parsedData.data) {
+      let section = await prisma.section.findFirst({
+        where: {
+          name: item.section,
+          programId: programId,
+        },
+      });
 
-    await prisma.$transaction(async (tx) => {
-      for (const item of validatedData) {
-        const section = await tx.section.upsert({
-          where: {
-            programId_name: {
-              programId,
-              name: item.section,
-            },
-          },
-          update: {},
-          create: {
-            name: item.section,
-            programId,
-          },
-        });
-
-        await tx.question.create({
+      if (!section) {
+        section = await prisma.section.create({
           data: {
-            questionText: item.question,
-            answers: JSON.stringify(item.answers),
-            correctAnswerIndex: item.correct,
-            sectionId: section.id,
+            name: item.section,
+            programId: programId,
           },
         });
       }
-    });
 
-    revalidatePath(`/programs/${programId}`);
-    return { success: `Successfully imported ${validatedData.length} questions.` };
-
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return { error: 'Validation failed', details: error.flatten() };
+      await prisma.question.create({
+        data: {
+          questionText: item.question,
+          answers: JSON.stringify(item.answers),
+          correctAnswerIndex: item.correct,
+          sectionId: section.id,
+        },
+      });
     }
-    if (error instanceof SyntaxError) {
-        return { error: 'Invalid JSON syntax.' };
-    }
-    console.error(error);
-    return { error: 'An unexpected error occurred during import.' };
+    revalidatePath(`/programs/${programId}`, 'page');
+    return { success: `Successfully imported ${parsedData.data.length} questions.` };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return { error: `Failed to import questions: ${errorMessage}` };
   }
 }

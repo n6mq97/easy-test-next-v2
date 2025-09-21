@@ -58,3 +58,17 @@ export async function updateSectionTheory(sectionId: string, theory: string) {
     return { error: 'Failed to update theory.' };
   }
 }
+
+export async function deleteSection(formData: FormData) {
+  const sectionId = formData.get('sectionId') as string;
+
+  if (!sectionId) {
+    throw new Error('Section ID is required');
+  }
+
+  await prisma.section.delete({
+    where: { id: sectionId },
+  });
+
+  revalidatePath('/programs/[id]', 'page');
+}

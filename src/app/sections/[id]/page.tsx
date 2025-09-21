@@ -1,5 +1,6 @@
-import { getSectionDetails } from '@/modules/sections/lib/actions';
+import { getSectionDetails, deleteSection } from '@/modules/sections/lib/actions';
 import { notFound } from 'next/navigation';
+import { SectionHeader } from '@/modules/sections/components/SectionHeader';
 import { EditSectionTheoryForm } from '@/modules/sections';
 import { QuestionList } from '@/modules/questions';
 
@@ -15,13 +16,17 @@ export default async function SectionPage({ params }: SectionPageProps) {
     notFound();
   }
 
+  const deleteSectionWithId = async () => {
+    'use server';
+    const formData = new FormData();
+    formData.append('sectionId', section.id);
+    await deleteSection(formData);
+  };
+
   return (
     <main className="container mx-auto p-4 md:p-8">
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold">Section: {section.name}</h1>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <SectionHeader section={section} deleteAction={deleteSectionWithId} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
         <div>
           <EditSectionTheoryForm sectionId={section.id} initialTheory={section.theory} />
         </div>
